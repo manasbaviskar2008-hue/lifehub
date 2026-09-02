@@ -1,10 +1,8 @@
+
 package com.example.demo.controller;
 
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import com.example.demo.entity.Reminder;
 import com.example.demo.service.ReminderService;
 
@@ -13,35 +11,37 @@ import com.example.demo.service.ReminderService;
 @CrossOrigin(origins = "*")
 public class ReminderController {
 
-    @Autowired
-    private ReminderService reminderService;
+    private final ReminderService service;
+
+    public ReminderController(ReminderService service) { this.service = service; }
 
     @PostMapping
-    public Reminder addReminder(@RequestBody Reminder reminder) {
-        return reminderService.addReminder(reminder);
+    public Reminder addReminder(@RequestHeader("X-User-Email") String userEmail,
+                                @RequestBody Reminder reminder) {
+        return service.addReminder(reminder, userEmail);
     }
 
     @GetMapping
-    public List<Reminder> getAllReminders() {
-        return reminderService.getAllReminders();
+    public List<Reminder> getAllReminders(@RequestHeader("X-User-Email") String userEmail) {
+        return service.getAllReminders(userEmail);
     }
 
     @GetMapping("/{id}")
-    public Reminder getReminderById(@PathVariable Long id) {
-        return reminderService.getReminderById(id);
+    public Reminder getReminderById(@PathVariable Long id,
+                                    @RequestHeader("X-User-Email") String userEmail) {
+        return service.getReminderById(id, userEmail);
     }
 
     @PutMapping("/{id}")
-    public Reminder updateReminder(
-            @PathVariable Long id,
-            @RequestBody Reminder reminder) {
-
-        reminder.setId(id);
-        return reminderService.updateReminder(reminder);
+    public Reminder updateReminder(@PathVariable Long id,
+                                   @RequestHeader("X-User-Email") String userEmail,
+                                   @RequestBody Reminder reminder) {
+        return service.updateReminder(id, reminder, userEmail);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteReminder(@PathVariable Long id) {
-        reminderService.deleteReminder(id);
+    public void deleteReminder(@PathVariable Long id,
+                               @RequestHeader("X-User-Email") String userEmail) {
+        service.deleteReminder(id, userEmail);
     }
 }

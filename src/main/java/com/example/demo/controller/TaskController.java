@@ -1,3 +1,4 @@
+
 package com.example.demo.controller;
 
 import java.util.List;
@@ -17,28 +18,42 @@ public class TaskController {
     private TaskService taskService;
 
     @PostMapping
-    public Task addTask(@RequestBody Task task) {
-        return taskService.addTask(task);
+    public Task addTask(
+            @RequestHeader("X-User-Email") String userEmail,
+            @RequestBody Task task) {
+
+        return taskService.addTask(task, userEmail);
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    public List<Task> getAllTasks(
+            @RequestHeader("X-User-Email") String userEmail) {
+
+        return taskService.getTasks(userEmail);
     }
 
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
-        return taskService.getTaskById(id);
+    public Task getTaskById(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Email") String userEmail) {
+
+        return taskService.getTaskById(id, userEmail);
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Long id, @RequestBody Task task) {
-        task.setId(id);
-        return taskService.updateTask(task);
+    public Task updateTask(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Email") String userEmail,
+            @RequestBody Task task) {
+
+        return taskService.updateTask(id, task, userEmail);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
+    public void deleteTask(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Email") String userEmail) {
+
+        taskService.deleteTask(id, userEmail);
     }
 }

@@ -1,3 +1,4 @@
+
 package com.example.demo.repository;
 
 import java.util.Optional;
@@ -9,6 +10,8 @@ import com.example.demo.entity.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByEmailIgnoreCase(String email);
 
     User findByEmailAndPassword(String email, String password);
 }

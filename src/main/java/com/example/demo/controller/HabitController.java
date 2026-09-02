@@ -10,60 +10,61 @@ import com.example.demo.service.HabitService;
 
 @RestController
 @RequestMapping("/api/habits")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class HabitController {
 
-    private final HabitService habitService;
+    private final HabitService service;
 
-    public HabitController(HabitService habitService) {
-        this.habitService = habitService;
+    public HabitController(HabitService service) {
+        this.service = service;
     }
 
     @GetMapping
-    public List<Habit> getAllHabits() {
-        return habitService.getAllHabits();
+    public List<Habit> getAllHabits(
+            @RequestHeader("X-User-Email") String userEmail) {
+
+        return service.getAllHabits(userEmail);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Habit> getHabitById(@PathVariable Long id) {
+    public ResponseEntity<Habit> getHabitById(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Email") String userEmail) {
 
-        Habit habit = habitService.getHabitById(id);
+        Habit habit = service.getHabitById(id, userEmail);
 
-        if (habit == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(habit);
+        return habit == null
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(habit);
     }
 
     @PostMapping
-    public Habit createHabit(@RequestBody Habit habit) {
-        return habitService.createHabit(habit);
+    public Habit createHabit(
+            @RequestHeader("X-User-Email") String userEmail,
+            @RequestBody Habit habit) {
+
+        return service.createHabit(habit, userEmail);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Habit> updateHabit(@PathVariable Long id,
-                                             @RequestBody Habit habit) {
+    public ResponseEntity<Habit> updateHabit(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Email") String userEmail,
+            @RequestBody Habit habit) {
 
-        Habit updatedHabit = habitService.updateHabit(id, habit);
+        Habit updated = service.updateHabit(id, habit, userEmail);
 
-        if (updatedHabit == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(updatedHabit);
+        return updated == null
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteHabit(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteHabit(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Email") String userEmail) {
 
-        Habit habit = habitService.getHabitById(id);
-
-        if (habit == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        habitService.deleteHabit(id);
+        service.deleteHabit(id, userEmail);
 
         return ResponseEntity.noContent().build();
     }

@@ -3,12 +3,17 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "expenses")	
+@Table(name = "expenses")
 public class Expense {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private User user;
 
     private String title;
 
@@ -21,7 +26,13 @@ public class Expense {
     public Expense() {
     }
 
-    public Expense(Long id, String title, Double amount, String category, String date) {
+    public Expense(
+            Long id,
+            String title,
+            Double amount,
+            String category,
+            String date) {
+
         this.id = id;
         this.title = title;
         this.amount = amount;
@@ -35,6 +46,14 @@ public class Expense {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getTitle() {
@@ -68,4 +87,4 @@ public class Expense {
     public void setDate(String date) {
         this.date = date;
     }
-}
+} 	 	
